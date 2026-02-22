@@ -1,28 +1,53 @@
-# Angular specific
-/dist/
-/out-tsc/
-/tmp/
-/coverage/
-/e2e/test-output/
-/.angular/
-.angular/
+# ─────────────────────────────────────────────
+# Dependencies
+# ─────────────────────────────────────────────
+node_modules/
+npm-debug.log*
 
-# Node modules and dependency files
-/node_modules/
-/package-lock.json
-/yarn.lock
+# ─────────────────────────────────────────────
+# Build output
+# ─────────────────────────────────────────────
+dist/
+build/
+coverage/
 
-# Environment files
-/.env
+# ─────────────────────────────────────────────
+# Environment files — NEVER commit secrets
+# ─────────────────────────────────────────────
+.env
+.env.development
+.env.production
+.env.staging
+.env.test
+.env.local
 
-# Angular CLI and build artefacts
-/.angular-cli.json
-/.ng/
+# Keep these committed (they're safe templates with no real values)
+!.env.example
+!.env.development.example
+!.env.production.example
 
-# TypeScript cache
+# ─────────────────────────────────────────────
+# Logs
+# ─────────────────────────────────────────────
+logs/
+*.log
+
+# ─────────────────────────────────────────────
+# OS / Editor
+# ─────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# ─────────────────────────────────────────────
+# TypeScript
+# ─────────────────────────────────────────────
 *.tsbuildinfo
 
-# Logs
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+# ─────────────────────────────────────────────
+# Docker
+# ─────────────────────────────────────────────
+.dockerignore

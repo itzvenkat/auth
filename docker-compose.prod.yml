@@ -1,0 +1,65 @@
+version: '3.8'
+
+# Production compose for Intel N100 Mini PC (Skull Saints Carbon)
+services:
+  api:
+    image: auth-service:latest
+    build:
+      context: .
+      target: production
+    container_name: auth-api
+    env_file:
+      - .env
+      - .env.production
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      DB_HOST: postgres
+      GOOGLE_CALLBACK_URL: ${APP_URL}/auth/google/callback
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: always
+    # Resource limits for Intel N100
+    deploy:
+      resources:
+        limits:
+          cpus: '1.5'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    healthcheck:
+      test: [ "CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/health" ]
+      interval: 30s
+      timeout: 10s
+      start_period: 45s
+      retries: 3
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: auth-postgres
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_DATABASE}
+    expose:
+      - "5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USERNAME} -d ${DB_DATABASE}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+
+volumes:
+  postgres-data:
+    driver: local

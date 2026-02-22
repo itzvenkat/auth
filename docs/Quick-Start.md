@@ -20,7 +20,29 @@ docker-compose up --build
 # Mailhog    → http://localhost:8025   (catches all sent emails)
 ```
 
-## Local (without Docker)
+## Mailhog — Local Email Testing
+
+Mailhog runs automatically with `docker-compose up`. It intercepts **all outbound emails** (verification, password reset, security alerts) — nothing is ever sent to real inboxes.
+
+**Inbox:** http://localhost:8025
+
+### Getting an email verification token
+
+1. Call `POST /auth/register`
+2. Open **http://localhost:8025** → click the **"Verify your email address"** email
+3. Find the link in the body:
+   ```
+   http://localhost:3000/auth/verify-email?token=550e8400-e29b-41d4-a716-446655440000
+   ```
+4. Copy the token after `?token=` and use it in `GET /auth/verify-email?token=<token>`
+   - Or paste it into the Postman `emailVerificationToken` environment variable
+
+### Getting a password reset token
+
+Same process — call `POST /auth/forgot-password`, open **http://localhost:8025**, copy the token from the reset email link, paste it into `POST /auth/reset-password`.
+
+> In production, replace Mailhog with a real SMTP provider in `.env.production`. See [[Environment Variables]].
+
 
 You'll need a running PostgreSQL instance.
 

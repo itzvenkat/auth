@@ -39,10 +39,15 @@ import { configValidationSchema } from './config/config.schema';
         username: config.get('DB_USERNAME'),
         password: config.get('DB_PASSWORD'),
         database: config.get('DB_DATABASE'),
+        // synchronize: true is fine in dev; NEVER in production — use migrations instead
         synchronize: config.get('NODE_ENV') !== 'production',
         logging: config.get('NODE_ENV') === 'development',
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
         ssl: config.get('DB_SSL') === 'true' ? { rejectUnauthorized: false } : false,
+        // Migrations (run via `npm run migration:run`, NOT automatically on startup)
+        migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
+        migrationsTableName: 'typeorm_migrations',
+        migrationsRun: false,
       }),
       inject: [ConfigService],
     }),

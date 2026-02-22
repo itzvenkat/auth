@@ -33,7 +33,13 @@
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
-    "lint": "eslint \"{src,apps,libs}/**/*.ts\" --fix"
+    "lint": "eslint \"{src,apps,libs}/**/*.ts\" --fix",
+    "typeorm": "ts-node -r tsconfig-paths/register -P tsconfig.json ./node_modules/typeorm/cli",
+    "migration:generate": "npm run typeorm -- migration:generate -d data-source.ts",
+    "migration:run": "npm run typeorm -- migration:run -d data-source.ts",
+    "migration:revert": "npm run typeorm -- migration:revert -d data-source.ts",
+    "migration:show": "npm run typeorm -- migration:show -d data-source.ts",
+    "migration:create": "npm run typeorm -- migration:create"
   },
   "dependencies": {
     "@nestjs/cache-manager": "^3.1.0",

@@ -15,34 +15,34 @@ export class ApiKey {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column({ nullable: true })
-    userId: string;
+    @Column({ type: 'varchar', nullable: true })
+    userId: string | null;
 
     @ManyToOne(() => User, (user) => user.apiKeys, { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'userId' })
     user: User;
 
-    @Column()
+    @Column({ type: 'varchar' })
     name: string;
 
-    @Column({ unique: true })
+    @Column({ type: 'varchar', unique: true })
     @Exclude()
     keyHash: string;
 
     // First 8 chars of the key shown to user (e.g. "sk-itzve...")
-    @Column()
+    @Column({ type: 'varchar' })
     keyPrefix: string;
 
     @Column({ type: 'simple-array', nullable: true })
-    scopes: string[];
+    scopes: string[] | null;
 
-    @Column({ nullable: true })
-    lastUsedAt: Date;
+    @Column({ type: 'timestamp', nullable: true })
+    lastUsedAt: Date | null;
 
-    @Column({ nullable: true })
-    expiresAt: Date;
+    @Column({ type: 'timestamp', nullable: true })
+    expiresAt: Date | null;
 
-    @Column({ default: true })
+    @Column({ type: 'boolean', default: true })
     isActive: boolean;
 
     @CreateDateColumn()

@@ -13,32 +13,32 @@ export class RefreshToken {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column({ unique: true })
+    @Column({ type: 'varchar', unique: true })
     tokenHash: string;
 
-    @Column()
+    @Column({ type: 'varchar' })
     userId: string;
 
     @ManyToOne(() => User, (user) => user.refreshTokens, { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'userId' })
     user: User;
 
-    @Column({ nullable: true })
-    userAgent: string;
+    @Column({ type: 'varchar', nullable: true })
+    userAgent: string | null;
 
-    @Column({ nullable: true })
-    ipAddress: string;
+    @Column({ type: 'varchar', nullable: true })
+    ipAddress: string | null;
 
-    @Column({ nullable: true })
-    deviceId: string;
+    @Column({ type: 'varchar', nullable: true })
+    deviceId: string | null;
 
-    @Column()
+    @Column({ type: 'timestamp' })
     expiresAt: Date;
 
-    @Column({ nullable: true })
-    revokedAt: Date;
+    @Column({ type: 'timestamp', nullable: true })
+    revokedAt: Date | null;
 
-    @Column({ default: false })
+    @Column({ type: 'boolean', default: false })
     isRevoked: boolean;
 
     @CreateDateColumn()

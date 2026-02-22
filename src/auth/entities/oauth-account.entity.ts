@@ -16,30 +16,30 @@ export class OAuthAccount {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column()
+    @Column({ type: 'varchar' })
     userId: string;
 
     @ManyToOne(() => User, (user) => user.oauthAccounts, { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'userId' })
     user: User;
 
-    @Column()
+    @Column({ type: 'varchar' })
     provider: string; // 'google' | 'github'
 
-    @Column()
+    @Column({ type: 'varchar' })
     providerAccountId: string;
 
-    @Column({ nullable: true })
-    accessToken: string;
+    @Column({ type: 'varchar', nullable: true })
+    accessToken: string | null;
 
-    @Column({ nullable: true })
-    refreshToken: string;
+    @Column({ type: 'varchar', nullable: true })
+    refreshToken: string | null;
 
-    @Column({ nullable: true })
-    tokenExpiry: Date;
+    @Column({ type: 'timestamp', nullable: true })
+    tokenExpiry: Date | null;
 
     @Column({ type: 'jsonb', nullable: true })
-    profile: Record<string, any>;
+    profile: Record<string, any> | null;
 
     @CreateDateColumn()
     createdAt: Date;

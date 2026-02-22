@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   api:
     build:
@@ -7,8 +5,10 @@ services:
       target: production
     container_name: auth-api
     env_file:
-      - .env
-      - .env.development
+      - path: .env
+        required: true
+      - path: .env.development
+        required: false # optional — create from .env.development.example
     ports:
       - "${PORT:-3000}:3000"
     environment:
@@ -17,6 +17,7 @@ services:
       SMTP_HOST: mailhog
       SMTP_PORT: "1025"
       SMTP_SECURE: "false"
+      SMTP_FROM: '"Auth Service" <noreply@auth.local>'
       GOOGLE_CALLBACK_URL: http://localhost:3000/auth/google/callback
     depends_on:
       postgres:
@@ -51,8 +52,8 @@ services:
     image: mailhog/mailhog:latest
     container_name: auth-mailhog
     ports:
-      - "1025:1025" # SMTP
-      - "8025:8025" # Web UI
+      - "1025:1025"
+      - "8025:8025"
     restart: unless-stopped
 
 volumes:

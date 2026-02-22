@@ -36,7 +36,7 @@ export class AuditLog {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column({ nullable: true })
+    @Column({ type: 'varchar', nullable: true })
     userId: string | null;
 
     @ManyToOne(() => User, (user) => user.auditLogs, {
@@ -49,16 +49,16 @@ export class AuditLog {
     @Column({ type: 'enum', enum: AuditAction })
     action: AuditAction;
 
-    @Column({ nullable: true })
-    ipAddress: string;
+    @Column({ type: 'varchar', nullable: true })
+    ipAddress: string | null;
 
-    @Column({ nullable: true })
-    userAgent: string;
+    @Column({ type: 'varchar', nullable: true })
+    userAgent: string | null;
 
     @Column({ type: 'jsonb', nullable: true })
-    metadata: Record<string, any>;
+    metadata: Record<string, any> | null;
 
-    @Column({ default: true })
+    @Column({ type: 'boolean', default: true })
     success: boolean;
 
     @CreateDateColumn()

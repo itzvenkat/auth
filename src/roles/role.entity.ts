@@ -13,16 +13,16 @@ export class Role {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column({ unique: true })
-    name: string; // 'admin' | 'user' | 'moderator'
+    @Column({ type: 'varchar', unique: true })
+    name: string; // 'superadmin' | 'admin' | 'moderator' | 'user'
 
-    @Column({ nullable: true })
-    description: string;
+    @Column({ type: 'varchar', nullable: true })
+    description: string | null;
 
     @Column({ type: 'simple-array', nullable: true })
-    permissions: string[]; // e.g. ['users:read', 'users:write']
+    permissions: string[] | null; // e.g. ['users:read', 'users:write']
 
-    @Column({ default: false })
+    @Column({ type: 'boolean', default: false })
     isDefault: boolean; // auto-assigned to new users
 
     @ManyToMany(() => User, (user) => user.roles)

@@ -22,46 +22,51 @@ export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ unique: true })
+  @Column({ type: 'varchar', unique: true })
   email: string;
 
-  @Column({ nullable: true })
+  // type must be explicit on nullable fields — TypeScript emits 'Object'
+  // for union types (string | null), which TypeORM cannot map to Postgres
+  @Column({ type: 'varchar', nullable: true })
   name: string | null;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   avatar: string | null;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   @Exclude()
   password: string | null;
 
   @Column({ type: 'enum', enum: UserStatus, default: UserStatus.PENDING })
   status: UserStatus;
 
-  // Email verification
-  @Column({ default: false })
+  // ─── Email verification ─────────────────────────────────────────────────────
+
+  @Column({ type: 'boolean', default: false })
   isEmailVerified: boolean;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   @Exclude()
   emailVerificationToken: string | null;
 
-  @Column({ nullable: true })
+  @Column({ type: 'timestamp', nullable: true })
   emailVerificationExpiry: Date | null;
 
-  // Password reset
-  @Column({ nullable: true })
+  // ─── Password reset ─────────────────────────────────────────────────────────
+
+  @Column({ type: 'varchar', nullable: true })
   @Exclude()
   passwordResetToken: string | null;
 
-  @Column({ nullable: true })
+  @Column({ type: 'timestamp', nullable: true })
   passwordResetExpiry: Date | null;
 
-  // Two-factor authentication
-  @Column({ default: false })
+  // ─── Two-factor authentication ──────────────────────────────────────────────
+
+  @Column({ type: 'boolean', default: false })
   isTwoFactorEnabled: boolean;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   @Exclude()
   twoFactorSecret: string | null;
 
@@ -69,18 +74,20 @@ export class User {
   @Exclude()
   twoFactorBackupCodes: string[] | null;
 
-  // Brute force protection
-  @Column({ default: 0 })
+  // ─── Brute force protection ─────────────────────────────────────────────────
+
+  @Column({ type: 'int', default: 0 })
   loginAttempts: number;
 
-  @Column({ nullable: true })
+  @Column({ type: 'timestamp', nullable: true })
   lockedUntil: Date | null;
 
-  // Tracking
-  @Column({ nullable: true })
+  // ─── Tracking ───────────────────────────────────────────────────────────────
+
+  @Column({ type: 'timestamp', nullable: true })
   lastLoginAt: Date | null;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   lastLoginIp: string | null;
 
   @Column({ type: 'jsonb', nullable: true })
@@ -92,7 +99,8 @@ export class User {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  // Relations — string-based to avoid circular imports
+  // ─── Relations — string-based to avoid circular imports ─────────────────────
+
   @ManyToMany('Role', 'users', { eager: false })
   @JoinTable({
     name: 'user_roles',

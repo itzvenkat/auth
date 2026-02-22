@@ -1,0 +1,33 @@
+name: Sync Wiki
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'docs/**'       # trigger only when docs change
+      - 'README.md'     # or when README changes
+
+  workflow_dispatch:    # allow manual trigger from GitHub UI
+
+jobs:
+  sync-wiki:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write   # required to push to the wiki repo
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Push docs to GitHub Wiki
+        uses: Andrew-Chen-Wang/github-wiki-action@v4
+        env:
+          # GITHUB_TOKEN is automatically provided by GitHub Actions
+          GH_TOKEN: ${{ github.token }}
+          GH_MAIL: ${{ github.actor }}@users.noreply.github.com
+          GH_NAME: github-actions[bot]
+
+        with:
+          path: docs/          # folder containing your wiki pages
+          commit-message: "docs: sync wiki from main [${{ github.sha }}]"

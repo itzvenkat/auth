@@ -23,6 +23,14 @@ async function bootstrap() {
   const rawOrigins = process.env.CORS_ORIGINS || process.env.FRONTEND_URL || '*';
   const allowedOrigins = rawOrigins.split(',').map((o) => o.trim());
 
+  // Always allow the app's own URL (needed for Swagger UI same-origin requests)
+  const appUrl = process.env.APP_URL || `http://localhost:${port}`;
+  if (!allowedOrigins.includes(appUrl)) allowedOrigins.push(appUrl);
+  // In dev, always allow localhost:3000 regardless of env config
+  if (isDev && !allowedOrigins.includes(`http://localhost:${port}`)) {
+    allowedOrigins.push(`http://localhost:${port}`);
+  }
+
   app.enableCors({
     origin: (origin, callback) => {
       // Allow server-to-server requests (no Origin header: curl, Postman, other services)

@@ -19,45 +19,40 @@ async function bootstrap() {
   app.use(cookieParser());
 
   // CORS — supports multiple origins via CORS_ORIGINS (comma-separated)
-  // Examples: 'https://app1.com,https://app2.com' or '*.mycompany.com'
   const rawOrigins = process.env.CORS_ORIGINS || process.env.FRONTEND_URL || '*';
   const allowedOrigins = rawOrigins.split(',').map((o) => o.trim());
 
-  // Always allow the app's own URL (needed for Swagger UI same-origin requests)
+  // Always allow the app's own URL
   const appUrl = process.env.APP_URL || `http://localhost:${port}`;
   if (!allowedOrigins.includes(appUrl)) allowedOrigins.push(appUrl);
-  // In dev, always allow localhost:3000 regardless of env config
-  if (isDev && !allowedOrigins.includes(`http://localhost:${port}`)) {
-    allowedOrigins.push(`http://localhost:${port}`);
-  }
 
   app.enableCors({
     origin: (origin, callback) => {
-      // Allow server-to-server requests (no Origin header: curl, Postman, other services)
-      if (!origin) return callback(null, true);
+      // In development, allow EVERYTHING to unblock testing/Swagger
+      if (isDev) return callback(null, true);
 
-      // Wildcard — allow all (dev/open APIs only)
-      if (allowedOrigins.includes('*')) return callback(null, true);
+      // In production, enforce strict origin checks
+      if (!origin || allowedOrigins.includes('*') || allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
 
-      // Exact match
-      if (allowedOrigins.includes(origin)) return callback(null, true);
-
-      // Wildcard subdomain match: '*.mycompany.com' matches 'https://app.mycompany.com'
+      // Wildcard subdomain match: '*.mycompany.com'
       const isWildcardMatch = allowedOrigins.some((allowed) => {
         if (!allowed.startsWith('*.')) return false;
-        const rootDomain = allowed.slice(2); // e.g. 'mycompany.com'
+        const rootDomain = allowed.slice(2);
         return origin.endsWith(`.${rootDomain}`);
       });
 
       if (isWildcardMatch) return callback(null, true);
 
+      console.warn(`[CORS] Rejected origin: ${origin}`);
       callback(new Error(`Origin '${origin}' not allowed by CORS`));
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-API-Key'],
     exposedHeaders: ['X-Total-Count'],
-    maxAge: 86400, // 24h preflight cache — reduces OPTIONS round-trips
+    maxAge: 86400,
   });
 
   // Global validation
